@@ -604,6 +604,48 @@
       margin-top: 8px;
     }
 
+    /* ===== AI Tool Links ===== */
+    .tool-links-card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.05);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .tool-links-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--navy);
+      white-space: nowrap;
+      margin: 0;
+    }
+    .tool-links-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .tool-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 22px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--white);
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .tool-link-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+    .tool-link-btn.chatgpt   { background: #10A37F; }
+    .tool-link-btn.gemini    { background: #4285F4; }
+    .tool-link-btn.perplexity { background: #20808D; }
+    .tool-link-icon { font-size: 0.8rem; opacity: 0.75; }
+    @media print { .tool-links-card { display: none !important; } }
+
     /* ===== Footer ===== */
     .site-footer {
       text-align: center;
@@ -738,6 +780,25 @@
 
 <!-- ===== MAIN CONTENT ===== -->
 <div class="container">
+
+  <!-- ==================== AI TOOL LINKS ==================== -->
+  <div class="tool-links-card">
+    <span class="tool-links-label">開始前，先開好工具：</span>
+    <div class="tool-links-row">
+      <a class="tool-link-btn chatgpt" href="https://chat.openai.com" target="_blank" rel="noopener">
+        <span class="tool-dot dot-chatgpt" style="width:8px;height:8px;"></span>
+        ChatGPT <span class="tool-link-icon">↗</span>
+      </a>
+      <a class="tool-link-btn gemini" href="https://gemini.google.com" target="_blank" rel="noopener">
+        <span class="tool-dot dot-gemini" style="width:8px;height:8px;"></span>
+        Gemini <span class="tool-link-icon">↗</span>
+      </a>
+      <a class="tool-link-btn perplexity" href="https://www.perplexity.ai" target="_blank" rel="noopener">
+        <span class="tool-dot dot-perp" style="width:8px;height:8px;"></span>
+        Perplexity <span class="tool-link-icon">↗</span>
+      </a>
+    </div>
+  </div>
 
   <!-- ==================== WARM-UP ==================== -->
   <div class="unit-heading">
