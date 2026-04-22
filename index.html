@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 工具實戰工作坊 — 練習題目單</title>
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans TC', Arial, sans-serif;
+      background: #F0F4F8;
+      color: #1a2a3a;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ===== Typography ===== */
+    h1, h2, h3 { line-height: 1.3; }
+    h1 { font-size: 1.7rem; font-weight: 700; }
+    h2 { font-size: 1.2rem; font-weight: 700; }
+    h3 { font-size: 1rem; font-weight: 600; }
+
+    /* ===== Colour Variables ===== */
+    :root {
+      --navy:   #1E3A5F;
+      --blue:   #2563EB;
+      --light-blue: #EFF6FF;
+      --accent: #3B82F6;
+      --green:  #16A34A;
+      --orange: #D97706;
+      --red:    #DC2626;
+      --border: #CBD5E1;
+      --muted:  #64748B;
+      --white:  #FFFFFF;
+    }
+
+    /* ===== Header ===== */
+    .site-header {
+      background: linear-gradient(135deg, var(--navy) 0%, #274a78 100%);
+      color: var(--white);
+      padding: 4px 16px 3px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .site-header h1 { font-size: 0.92rem; margin-bottom: 0; }
+    .site-header .subtitle {
+      font-size: 0.68rem;
+      opacity: 0.82;
+      letter-spacing: 0.03em;
+    }
+
+    /* ===== Progress Bar ===== */
+    .progress-bar-wrap {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 5px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: nowrap;
+      position: sticky;
+      top: var(--header-height, 34px); /* 由 JS 動態計算 */
+      z-index: 99;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .progress-label {
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+    .progress-track {
+      flex: 1;
+      min-width: 80px;
+      height: 7px;
+      background: #E2E8F0;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--accent));
+      border-radius: 99px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .progress-count {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .btn-print {
+      margin-left: auto;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-print:hover { background: var(--blue); }
+
+    /* ===== Section Divider (unit heading) ===== */
+    .unit-heading {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 6px 0 2px;
+    }
+    .unit-heading-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+    .unit-heading-line {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, var(--border), transparent);
+      border-radius: 99px;
+    }
+
+    /* ===== Main Container ===== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ===== Card ===== */
+    .card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    /* ===== Card Header ===== */
+    .card-header {
+      background: var(--navy);
+      color: var(--white);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .card-header .badge {
+      background: var(--blue);
+      color: var(--white);
+      border-radius: 99px;
+      padding: 2px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .card-header h2 { font-size: 1.05rem; }
+    .card-header .done-indicator {
+      margin-left: auto;
+      font-size: 1.2rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card-header .done-indicator.visible { opacity: 1; }
+
+    /* Difficulty badges */
+    .diff-badge {
+      border-radius: 99px;
+      padding: 2px 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .diff-lv1 { background: #DCFCE7; color: #15803D; }
+    .diff-lv2 { background: #FEF9C3; color: #854D0E; }
+    .diff-lv3 { background: #FEE2E2; color: #991B1B; }
+
+    /* Warm-up header special colour */
+    .card-header.warmup { background: linear-gradient(135deg, #1E3A5F, #1d5c7a); }
+    /* Unit 2 header */
+    .card-header.unit2 { background: linear-gradient(135deg, #1E3A5F, #3b1d78); }
+    /* Unit 4 header */
+    .card-header.unit4 { background: linear-gradient(135deg, #1E3A5F, #1d5544); }
+
+    /* ===== Card Body ===== */
+    .card-body { padding: 20px; }
+
+    /* ===== Section Labels ===== */
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    /* ===== Task Box ===== */
+    .task-box {
+      background: var(--light-blue);
+      border-left: 4px solid var(--blue);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.93rem;
+    }
+    .task-box p { margin-bottom: 0; }
+
+    /* ===== Bad Prompt Box ===== */
+    .bad-prompt-box {
+      background: #FFF1F2;
+      border-left: 4px solid #F43F5E;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      font-size: 0.93rem;
+    }
+    .bad-prompt-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #BE123C;
+      margin-bottom: 4px;
+    }
+    .bad-prompt-text {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #9F1239;
+      font-style: italic;
+    }
+
+    /* ===== Material Box ===== */
+    .material-box {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+    .material-box .mat-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--orange);
+      margin-bottom: 6px;
+    }
+    .material-text {
+      color: #374151;
+      line-height: 1.7;
+    }
+
+    /* ===== Prompt Box ===== */
+    .prompt-wrap {
+      margin-bottom: 16px;
+    }
+    .prompt-box {
+      position: relative;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 50px 12px 14px;
+      font-size: 0.88rem;
+      color: #1E293B;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+    .btn-copy {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--blue);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-copy:hover { background: var(--navy); }
+    .btn-copy.copied { background: var(--green); }
+
+
+    /* ===== Compare Grid ===== */
+    .compare-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .compare-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .tool-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-chatgpt  { background: #10A37F; }
+    .dot-gemini   { background: #4285F4; }
+    .dot-perp     { background: #20808D; }
+    .tool-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1E293B;
+    }
+    .compare-textarea {
+      width: 100%;
+      min-height: 150px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.83rem;
+      line-height: 1.55;
+      resize: vertical;
+      color: #1E293B;
+      background: #FAFAFA;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .compare-textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+      background: var(--white);
+    }
+    .compare-textarea::placeholder { color: #B0BAC8; }
+
+    /* ===== Single-col textarea ===== */
+    .single-textarea {
+      width: 100%;
+      min-height: 130px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      resize: vertical;
+      color: #1E293B;
+      background: #FAFAFA;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 12px;
+    }
+    .single-textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+      background: var(--white);
+    }
+    .single-textarea::placeholder { color: #B0BAC8; }
+
+    /* ===== Observation Box ===== */
+    .observe-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .observe-points {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .obs-tag {
+      background: var(--light-blue);
+      color: var(--blue);
+      border-radius: 99px;
+      padding: 2px 10px;
+      font-size: 0.77rem;
+      font-weight: 600;
+    }
+    .note-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+    .note-textarea {
+      width: 100%;
+      min-height: 80px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 0.83rem;
+      resize: vertical;
+      color: #1E293B;
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .note-textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    .note-textarea::placeholder { color: #B0BAC8; }
+
+    /* ===== Mark Done Button ===== */
+    .btn-done-wrap {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .btn-done {
+      background: #F1F5F9;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .btn-done:hover { background: #E2E8F0; }
+    .btn-done.active {
+      background: #DCFCE7;
+      color: var(--green);
+      border-color: #86EFAC;
+    }
+
+    /* ===== Divider ===== */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+
+    /* ===== Info pill ===== */
+    .info-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #F0F9FF;
+      border: 1px solid #BAE6FD;
+      border-radius: 99px;
+      padding: 3px 12px;
+      font-size: 0.78rem;
+      color: #0369A1;
+      margin-bottom: 14px;
+    }
+
+    /* ===== Gem Steps ===== */
+    .gem-step {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .gem-step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .gem-step-num {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .gem-step-title {
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* Radio group */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .radio-option:hover { border-color: var(--blue); background: var(--light-blue); }
+    .radio-option input[type="radio"] { margin-top: 2px; accent-color: var(--blue); }
+    .radio-option.selected { border-color: var(--blue); background: var(--light-blue); }
+    .radio-option-text { font-size: 0.9rem; color: #1E293B; }
+
+    /* Field label */
+    .field-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 5px;
+      margin-top: 10px;
+    }
+
+    /* Eval checklist */
+    .eval-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .eval-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .eval-item input[type="checkbox"] { accent-color: var(--green); width: 16px; height: 16px; cursor: pointer; }
+    .eval-item span { font-size: 0.9rem; color: #1E293B; }
+    .eval-item.checked { background: #F0FDF4; border-color: #86EFAC; }
+
+    /* Details / Summary (reference answer) */
+    details {
+      background: #F0FDF4;
+      border: 1px solid #86EFAC;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+    details summary {
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+    }
+    details summary::before { content: '▶ '; font-size: 0.75em; }
+    details[open] summary::before { content: '▼ '; }
+    details .answer-content {
+      padding: 0 14px 14px;
+      font-size: 0.88rem;
+      color: #1E293B;
+      line-height: 1.65;
+      border-top: 1px solid #BBF7D0;
+      margin-top: 0;
+    }
+    details .answer-content p { margin-bottom: 8px; }
+    details .answer-content .ref-prompt {
+      background: #FAFAFA;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      color: #1E293B;
+      margin-top: 8px;
+    }
+
+    /* ===== Footer ===== */
+    .site-footer {
+      text-align: center;
+      padding: 18px 16px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      h1 { font-size: 1.3rem; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .progress-bar-wrap { gap: 8px; top: 0; }
+      .btn-print { margin-left: 0; }
+      /* 手機版：header 不黏頂，讓進度條從頂部吸附 */
+      .site-header { position: static; }
+    }
+
+    /* ===== Print Styles ===== */
+    @media print {
+      @page { size: A4 portrait; margin: 1.5cm; }
+
+      /* 版面 */
+      html, body { background: #fff !important; font-size: 13px; }
+      .container { padding: 0; gap: 0; max-width: 100%; }
+      .site-header { position: static !important; top: auto !important; padding: 6px 16px 5px; }
+      .site-footer { display: none !important; }
+      .progress-bar-wrap { display: none !important; }
+
+      /* 隱藏互動元素 */
+      .btn-copy, .btn-done, .btn-print, .btn-done-wrap { display: none !important; }
+
+      /* 所有卡片統一樣式，但不強制換頁 */
+      .card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin: 0;
+      }
+
+      /*
+        換頁邏輯：
+        (A) 同一單元內第 2 張以後的卡片 → 換頁
+        (B) 卡片結束後接到下一個單元標題 → 在標題前換頁
+        (C) 第一個單元標題（暖身）不換頁，直接跟 header 同頁
+      */
+      .card + .card {
+        break-before: page;
+        page-break-before: always;
+      }
+      .card + .unit-heading {
+        break-before: page;
+        page-break-before: always;
+      }
+
+      /* 單元標題不單獨留在頁底，必須跟著後面的內容 */
+      .unit-heading {
+        break-after: avoid;
+        page-break-after: avoid;
+        margin-top: 8px;
+        padding-top: 0;
+      }
+      /* 單元說明文字（緊接在標題後的 <p>）也不單獨跨頁 */
+      .unit-heading + p {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      /* card-header 與內容的第一個元素保持同頁 */
+      .card-header { break-after: avoid; page-break-after: avoid; }
+
+      /* 這些區塊盡量不拆開 */
+      .task-box, .material-box, .prompt-wrap,
+      .bad-prompt-box, .observe-box, .compare-col,
+      .gem-step, details { break-inside: avoid; page-break-inside: avoid; }
+
+      /* textarea：field-sizing 支援的瀏覽器自動展高；其餘由 beforeprint JS 補強 */
+      textarea,
+      .compare-textarea,
+      .note-textarea,
+      .single-textarea {
+        border: 1px solid #aaa !important;
+        resize: none;
+        overflow: visible !important;
+        background: #fff !important;
+        field-sizing: content;
+        max-height: none !important;
+      }
+
+      /* 顏色保留（色塊背景、徽章） */
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      /* details 折疊展開顯示 */
+      details { background: #fff; border: 1px solid #ccc; }
+      details[open] .answer-content { display: block; }
+
+      /* 計時器標籤隱藏（按鈕已隱藏，標題留著沒意義） */
+      .print-hide { display: none !important; }
+
+      /* compare-grid 強制三欄（避免瀏覽器 print 模式折疊成單欄） */
+      .compare-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+      }
+
+      /* Gem radio 選項不需要 hover 樣式 */
+      .radio-group { gap: 6px; }
+      .radio-option { padding: 6px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header">
+  <h1>AI 工具實戰工作坊 — 練習題目單</h1>
+  <p class="subtitle">ChatGPT &nbsp;·&nbsp; Gemini &nbsp;·&nbsp; Perplexity &nbsp;|&nbsp; 暖身 + 三單元實作</p>
+</header>
+
+<!-- ===== PROGRESS BAR ===== -->
+<div class="progress-bar-wrap">
+  <span class="progress-label">整體進度</span>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="progress-count" id="progressCount">區塊 0 / 7 完成</span>
+  <button class="btn-print" onclick="window.print()">列印 / 儲存 PDF</button>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="container">
+
+  <!-- ==================== WARM-UP ==================== -->
+  <div class="unit-heading">
+    <span class="unit-heading-text">🔥 暖身題（Warm-up）</span>
+    <div class="unit-heading-line"></div>
+  </div>
+
+  <div class="card" id="card0">
+    <div class="card-header warmup">
+      <span class="badge" style="background:#0EA5E9;">暖身</span>
+      <h2>打開工具，先跟 AI 說說話</h2>
+      <span class="done-indicator" id="done0">✅</span>
+    </div>
+    <div class="card-body">
+
+      <span class="info-pill">任選一種 AI 工具操作即可：ChatGPT、Gemini 或 Perplexity</span>
+
+      <p class="section-label">任務說明</p>
+      <div class="task-box">
+        <p>先請 AI 用「一句話」自我介紹，然後再追問它：「你有哪三個你最不擅長的事？」<br>
+        把兩個問題的回答都貼到下方。</p>
+      </div>
+
+      <p class="section-label">第一個問題的 AI 回答（一句話自我介紹）</p>
+      <textarea class="single-textarea" placeholder="把 AI 的自我介紹貼在這裡…"></textarea>
+
+      <p class="section-label">第二個問題的 AI 回答（三個不擅長的事）</p>
+      <textarea class="single-textarea" placeholder="把 AI 說它不擅長什麼貼在這裡…"></textarea>
+
+      <p class="section-label">你的小觀察</p>
+      <textarea class="note-textarea" placeholder="AI 的回答有什麼讓你覺得有趣或意外的？"></textarea>
+
+      <div class="btn-done-wrap" style="margin-top:14px;">
+        <button class="btn-done" id="doneBtn0" onclick="markDone(0)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== UNIT 1 HEADING ==================== -->
+  <div class="unit-heading">
+    <span class="unit-heading-text">📌 單元一｜三工具比較</span>
+    <div class="unit-heading-line"></div>
+  </div>
+
+  <p style="font-size:0.88rem; color:var(--muted); margin-top:-12px;">三題難度遞增，建議依序完成。每題都用相同 Prompt 分別問 ChatGPT、Gemini、Perplexity，再比較差異。</p>
+
+  <!-- ==================== CARD 1 ==================== -->
+  <div class="card" id="card1">
+    <div class="card-header">
+      <span class="badge">題目一</span>
+      <span class="diff-badge diff-lv1">Lv.1 🟢 入門</span>
+      <h2>法規查詢 — 測試即時資訊能力</h2>
+      <span class="done-indicator" id="done1">✅</span>
+    </div>
+    <div class="card-body">
+
+      <p class="section-label">任務說明</p>
+      <div class="task-box">
+        <p>查詢《性別平等工作法》中「陪產假」的最新規定，並請 AI 說明：(1) 可請幾天？(2) 需要哪些文件？(3) 申請期限？<br>
+        <strong>難度說明：</strong>法規查詢有標準答案，最容易判斷哪個工具資訊正確、哪個有落差。</p>
+      </div>
+
+      <p class="section-label">建議 Prompt</p>
+      <div class="prompt-wrap">
+        <div class="prompt-box" id="prompt1">請問依照台灣《性別平等工作法》最新規定，男性員工的陪產假可以請幾天？申請時需要準備什麼文件？申請期限有什麼規定？請條列說明。<button class="btn-copy" onclick="copyPrompt('prompt1', this)">複製</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="compare-label">三工具回答比較</p>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-chatgpt"></span>
+            <span class="tool-name">ChatGPT</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 ChatGPT 的回答貼在這裡…"></textarea>
+        </div>
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-gemini"></span>
+            <span class="tool-name">Gemini</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 Gemini 的回答貼在這裡…"></textarea>
+        </div>
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-perp"></span>
+            <span class="tool-name">Perplexity</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 Perplexity 的回答貼在這裡…"></textarea>
+        </div>
+      </div>
+
+      <div class="observe-box">
+        <p class="section-label" style="margin-bottom:8px;">觀察重點</p>
+        <div class="observe-points">
+          <span class="obs-tag">Perplexity 是否附來源？</span>
+          <span class="obs-tag">Gemini 是否即時更新？</span>
+          <span class="obs-tag">ChatGPT 是否有知識截止問題？</span>
+          <span class="obs-tag">哪個資訊最完整？</span>
+        </div>
+        <p class="note-label">學員心得筆記</p>
+        <textarea class="note-textarea" placeholder="記錄你的觀察與心得，例如：哪個工具回答最完整？有沒有發現錯誤資訊？…"></textarea>
+      </div>
+
+      <div class="btn-done-wrap">
+        <button class="btn-done" id="doneBtn1" onclick="markDone(1)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== CARD 2 ==================== -->
+  <div class="card" id="card2">
+    <div class="card-header">
+      <span class="badge">題目二</span>
+      <span class="diff-badge diff-lv2">Lv.2 🟡 進階</span>
+      <h2>表格整理 — 測試格式輸出能力</h2>
+      <span class="done-indicator" id="done2">✅</span>
+    </div>
+    <div class="card-body">
+
+      <p class="section-label">任務說明</p>
+      <div class="task-box">
+        <p>將以下雜亂的會議記錄整理成清楚的「行動事項表格」，欄位包含：負責人、工作事項、完成期限。<br>
+        <strong>難度說明：</strong>AI 需要理解語意、判斷誰負責什麼、整理成結構化格式，比單純查詢更考驗語意理解能力。</p>
+      </div>
+
+      <p class="section-label">原始素材（會議記錄）</p>
+      <div class="material-box">
+        <p class="mat-title">📋 請複製以下內容，貼入 Prompt 的 [貼上會議記錄] 處</p>
+        <p class="material-text">今天開會討論了三件事。第一，關於年度採購計畫，小王說要在月底前完成報價，需要請採購組配合。第二，新版公文系統上線的事，IT 組說最快下個月初可以完成測試，屆時請各組指定一名同仁參與試用。第三，關於員工旅遊，人事室說要在下週五前收齊報名表，請各組主管提醒同仁。</p>
+      </div>
+
+      <p class="section-label">建議 Prompt</p>
+      <div class="prompt-wrap">
+        <div class="prompt-box" id="prompt2">請將以下會議記錄整理成一個清楚的行動事項表格，欄位包含：負責人、工作事項、完成期限。
+
+[貼上上方會議記錄]<button class="btn-copy" onclick="copyPrompt('prompt2', this)">複製</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="compare-label">三工具回答比較</p>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-chatgpt"></span>
+            <span class="tool-name">ChatGPT</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 ChatGPT 的回答貼在這裡…"></textarea>
+        </div>
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-gemini"></span>
+            <span class="tool-name">Gemini</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 Gemini 的回答貼在這裡…"></textarea>
+        </div>
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-perp"></span>
+            <span class="tool-name">Perplexity</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 Perplexity 的回答貼在這裡…"></textarea>
+        </div>
+      </div>
+
+      <div class="observe-box">
+        <p class="section-label" style="margin-bottom:8px;">觀察重點</p>
+        <div class="observe-points">
+          <span class="obs-tag">表格是否清晰易讀？</span>
+          <span class="obs-tag">所有行動事項是否都被擷取？</span>
+          <span class="obs-tag">欄位對齊格式如何？</span>
+          <span class="obs-tag">期限是否清楚標示？</span>
+        </div>
+        <p class="note-label">學員心得筆記</p>
+        <textarea class="note-textarea" placeholder="記錄你的觀察，例如：哪個工具表格最整齊？有沒有遺漏任何行動事項？…"></textarea>
+      </div>
+
+      <div class="btn-done-wrap">
+        <button class="btn-done" id="doneBtn2" onclick="markDone(2)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== CARD 3 ==================== -->
+  <div class="card" id="card3">
+    <div class="card-header">
+      <span class="badge">題目三</span>
+      <span class="diff-badge diff-lv3">Lv.3 🔴 挑戰</span>
+      <h2>文章潤飾 — 測試語感與創意</h2>
+      <span class="done-indicator" id="done3">✅</span>
+    </div>
+    <div class="card-body">
+
+      <p class="section-label">任務說明</p>
+      <div class="task-box">
+        <p>將以下正式公文通知改寫成語氣友善、輕鬆的內部公告，讓同仁更願意閱讀，但須保留所有重要資訊。<br>
+        <strong>難度說明：</strong>沒有標準答案——需要你自己判斷哪個版本語感最自然、最符合辦公室文化，最考驗個人判斷力與創意。</p>
+      </div>
+
+      <p class="section-label">原始素材（正式公文）</p>
+      <div class="material-box">
+        <p class="mat-title">📋 請複製以下內容，貼入 Prompt 的 [貼上原文] 處</p>
+        <p class="material-text">本機關為強化同仁資訊安全意識，訂於本月25日（週三）上午9時至11時，假本機關三樓簡報室辦理『資訊安全教育訓練』課程，請各單位主管轉知所屬同仁，務必準時出席，不得缺席，如有特殊事由無法出席者，應事先以書面向業務承辦人請假。</p>
+      </div>
+
+      <p class="section-label">建議 Prompt</p>
+      <div class="prompt-wrap">
+        <div class="prompt-box" id="prompt3">請將以下這段正式公文通知，改寫成語氣友善、輕鬆的內部公告，讓同仁更願意閱讀，但保留所有重要資訊。
+
+[貼上上方原文]<button class="btn-copy" onclick="copyPrompt('prompt3', this)">複製</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="compare-label">三工具回答比較</p>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-chatgpt"></span>
+            <span class="tool-name">ChatGPT</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 ChatGPT 的回答貼在這裡…"></textarea>
+        </div>
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-gemini"></span>
+            <span class="tool-name">Gemini</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 Gemini 的回答貼在這裡…"></textarea>
+        </div>
+        <div class="compare-col">
+          <div class="tool-header">
+            <span class="tool-dot dot-perp"></span>
+            <span class="tool-name">Perplexity</span>
+          </div>
+          <textarea class="compare-textarea" placeholder="請將 Perplexity 的回答貼在這裡…"></textarea>
+        </div>
+      </div>
+
+      <div class="observe-box">
+        <p class="section-label" style="margin-bottom:8px;">觀察重點</p>
+        <div class="observe-points">
+          <span class="obs-tag">語氣轉換是否自然？</span>
+          <span class="obs-tag">所有關鍵資訊是否保留？</span>
+          <span class="obs-tag">哪個工具最有創意？</span>
+          <span class="obs-tag">文字是否過於口語或失去專業感？</span>
+        </div>
+        <p class="note-label">學員心得筆記</p>
+        <textarea class="note-textarea" placeholder="記錄你的觀察，例如：哪個版本最讓你想讀？哪個工具的語感最符合辦公室文化？…"></textarea>
+      </div>
+
+      <div class="btn-done-wrap">
+        <button class="btn-done" id="doneBtn3" onclick="markDone(3)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== UNIT 2 HEADING ==================== -->
+  <div class="unit-heading">
+    <span class="unit-heading-text">✏️ 單元二｜Prompt 改寫練習</span>
+    <div class="unit-heading-line"></div>
+  </div>
+
+  <p style="font-size:0.88rem; color:var(--muted); margin-top:-12px;">本單元聚焦在「把模糊 Prompt 改成精準 Prompt」，使用任一 AI 工具操作即可，不需要比較三個工具。</p>
+
+  <!-- ==================== CARD 4 - Prompt Rewrite A ==================== -->
+  <div class="card" id="card4">
+    <div class="card-header unit2">
+      <span class="badge" style="background:#7C3AED;">改寫 A</span>
+      <h2>把「請幫我寫信」變成一個好 Prompt</h2>
+      <span class="done-indicator" id="done4">✅</span>
+    </div>
+    <div class="card-body">
+
+      <p class="section-label">原始（爛）Prompt</p>
+      <div class="bad-prompt-box">
+        <p class="bad-prompt-label">問題示範</p>
+        <p class="bad-prompt-text">「請幫我寫信。」</p>
+      </div>
+
+      <p class="section-label">任務說明</p>
+      <div class="task-box">
+        <p>這句話缺少哪些資訊？請根據以下情境，把這個 Prompt 補完：<br><br>
+        <strong>情境：</strong>你要寫一封信給廠商，告知因預算縮減，必須延後原訂採購案的執行時程，語氣需禮貌但明確。<br><br>
+        先思考「一個好 Prompt 需要哪些要素」，再在下方撰寫你改寫後的版本。</p>
+      </div>
+
+      <p class="section-label">你改寫後的 Prompt（請自己撰寫）</p>
+      <textarea class="single-textarea" style="min-height:140px;" placeholder="在這裡撰寫你改寫後的 Prompt，試著包含：角色設定、背景脈絡、具體要求、語氣格式等要素…"></textarea>
+
+      <p class="section-label">把改寫後的 Prompt 貼到 AI，記錄它的回答</p>
+      <textarea class="single-textarea" style="min-height:140px;" placeholder="把 AI 回覆的信件內容貼在這裡…"></textarea>
+
+      <details>
+        <summary>查看參考解答</summary>
+        <div class="answer-content">
+          <p>一個好 Prompt 應該包含：<strong>角色設定</strong>（你是誰）、<strong>任務描述</strong>（要做什麼）、<strong>背景資訊</strong>（為什麼、給誰）、<strong>格式要求</strong>（語氣、長度）。</p>
+          <p>參考 Prompt：</p>
+          <div class="ref-prompt">你是一名政府採購人員，請幫我撰寫一封正式的公文信件，寄給廠商 XX 公司，說明：本機關因今年度預算調整，原訂 [月份] 執行之採購案需延後至 [新日期] 辦理，請廠商惠予配合。語氣需禮貌、正式，格式符合公務書信規範，字數約 150-200 字。</div>
+        </div>
+      </details>
+
+      <div class="btn-done-wrap" style="margin-top:14px;">
+        <button class="btn-done" id="doneBtn4" onclick="markDone(4)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== CARD 5 - Prompt Rewrite B ==================== -->
+  <div class="card" id="card5">
+    <div class="card-header unit2">
+      <span class="badge" style="background:#7C3AED;">改寫 B</span>
+      <h2>把「幫我準備會議」變成一個好 Prompt</h2>
+      <span class="done-indicator" id="done5">✅</span>
+    </div>
+    <div class="card-body">
+
+      <p class="section-label">原始（爛）Prompt</p>
+      <div class="bad-prompt-box">
+        <p class="bad-prompt-label">問題示範</p>
+        <p class="bad-prompt-text">「幫我準備會議。」</p>
+      </div>
+
+      <p class="section-label">任務說明</p>
+      <div class="task-box">
+        <p>這個 Prompt 太模糊了——AI 不知道什麼會議、準備什麼、給誰看。請根據以下情境補充細節：<br><br>
+        <strong>情境：</strong>你下週要主持一場跨部門協調會議，主題是「推動無紙化作業」，參與者包含資訊部門和各業務組主管，時間 1 小時。<br><br>
+        試著讓 AI 不只是列出議程，而是提供一份「開會就能直接用」的完整準備清單。</p>
+      </div>
+
+      <p class="section-label">你改寫後的 Prompt（請自己撰寫）</p>
+      <textarea class="single-textarea" style="min-height:140px;" placeholder="在這裡撰寫你改寫後的 Prompt…"></textarea>
+
+      <p class="section-label">把改寫後的 Prompt 貼到 AI，記錄它的回答</p>
+      <textarea class="single-textarea" style="min-height:180px;" placeholder="把 AI 回覆的會議準備內容貼在這裡…"></textarea>
+
+      <details>
+        <summary>查看參考解答</summary>
+        <div class="answer-content">
+          <p>要讓 AI 給出實用的回答，關鍵是讓它知道你的<strong>角色</strong>、<strong>會議目的</strong>、<strong>參與對象</strong>和你真正需要的<strong>輸出形式</strong>。</p>
+          <p>參考 Prompt：</p>
+          <div class="ref-prompt">你是一位資深行政主管，協助我準備一場跨部門協調會議的完整議程。
+會議背景：主題為推動無紙化作業、參與者：資訊部門主管及各業務組主管、時間：1 小時。
+請提供：(1) 會議開場說明（2 分鐘）、(2) 各議題時間分配建議、(3) 可能遇到的反對意見與建議應對方式。</div>
+        </div>
+      </details>
+
+      <div class="btn-done-wrap" style="margin-top:14px;">
+        <button class="btn-done" id="doneBtn5" onclick="markDone(5)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== UNIT 4 HEADING ==================== -->
+  <div class="unit-heading">
+    <span class="unit-heading-text">⚙️ 單元四｜建置 Gem 操作單</span>
+    <div class="unit-heading-line"></div>
+  </div>
+
+  <p style="font-size:0.88rem; color:var(--muted); margin-top:-12px;">Gem 是 Gemini 的「自訂 AI 助手」功能，讓你打造一個有固定個性和格式要求的 AI 夥伴。跟著以下步驟一步一步建立你自己的 Gem。</p>
+
+  <!-- ==================== CARD 6 - Build Gem ==================== -->
+  <div class="card" id="card6">
+    <div class="card-header unit4">
+      <span class="badge" style="background:#059669;">單元四</span>
+      <h2>建置你的第一個 Gem</h2>
+      <span class="done-indicator" id="done6">✅</span>
+    </div>
+    <div class="card-body">
+
+      <!-- Step 1 -->
+      <div class="gem-step">
+        <div class="gem-step-header">
+          <div class="gem-step-num">1</div>
+          <div class="gem-step-title">決定你的 Gem 主題</div>
+        </div>
+
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px;">選一個你最常做、最想用 AI 幫忙的工作場景（選完後下方系統指令模板會自動更新）：</p>
+
+        <div class="radio-group" id="gemRadioGroup">
+          <label class="radio-option" id="radioOpt0">
+            <input type="radio" name="gemType" value="weekly" onchange="updateGemTemplate('weekly')">
+            <span class="radio-option-text">📝 <strong>周報撰寫助手</strong> — 每週把工作流水帳整理成清楚的周報格式</span>
+          </label>
+          <label class="radio-option" id="radioOpt1">
+            <input type="radio" name="gemType" value="official" onchange="updateGemTemplate('official')">
+            <span class="radio-option-text">📧 <strong>公文潤稿助手</strong> — 把草稿改成正式公文語氣</span>
+          </label>
+          <label class="radio-option" id="radioOpt2">
+            <input type="radio" name="gemType" value="meeting" onchange="updateGemTemplate('meeting')">
+            <span class="radio-option-text">📊 <strong>會議記錄整理師</strong> — 把雜亂的會議紀錄整理成行動事項</span>
+          </label>
+          <label class="radio-option" id="radioOpt3">
+            <input type="radio" name="gemType" value="custom" onchange="updateGemTemplate('custom')">
+            <span class="radio-option-text">🎨 <strong>自訂主題</strong> — 填寫你自己的應用場景</span>
+          </label>
+        </div>
+
+        <div id="customThemeWrap" style="display:none; margin-top:6px;">
+          <p class="field-label">請描述你的自訂主題</p>
+          <textarea class="single-textarea" style="min-height:70px;" id="customThemeInput" placeholder="例如：協助我整理客訴信件，分類問題類型並擬定初步回覆…" oninput="updateCustomTemplate(this.value)"></textarea>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="gem-step">
+        <div class="gem-step-header">
+          <div class="gem-step-num">2</div>
+          <div class="gem-step-title">撰寫 Gem 的基本設定</div>
+        </div>
+
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:10px;">在 Gemini 的「Gem 管理員」中建立新 Gem，把以下資訊填入對應欄位：</p>
+
+        <p class="field-label">Gem 名稱（建議：功能 + 角色，例如「周報小幫手」）</p>
+        <textarea class="single-textarea" style="min-height:60px;" id="gemName" placeholder="幫你的 Gem 取個好記的名字…"></textarea>
+
+        <p class="field-label">Gem 描述（一句話說明用途）</p>
+        <textarea class="single-textarea" style="min-height:70px;" id="gemDesc" placeholder="例如：協助我將每週工作記錄整理成標準格式的周報。"></textarea>
+
+        <p class="field-label">系統指令（System Prompt）— 以下模板可依需求修改後複製到 Gemini</p>
+        <div style="position:relative;">
+          <textarea class="single-textarea" style="min-height:160px; font-size:0.85rem;" id="gemSystemPrompt" placeholder="請先在上方選擇 Gem 主題，系統指令模板會自動帶入…"></textarea>
+          <button class="btn-copy" style="position:absolute; top:8px; right:8px;" onclick="copyGemPrompt(this)">複製</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="gem-step">
+        <div class="gem-step-header">
+          <div class="gem-step-num">3</div>
+          <div class="gem-step-title">測試你的 Gem</div>
+        </div>
+
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px;">在 Gemini 建立好 Gem 後，用以下測試素材試試看！</p>
+
+        <div class="material-box">
+          <p class="mat-title">📋 測試素材（同單元一題目二的會議記錄）</p>
+          <p class="material-text">今天開會討論了三件事。第一，關於年度採購計畫，小王說要在月底前完成報價，需要請採購組配合。第二，新版公文系統上線的事，IT 組說最快下個月初可以完成測試，屆時請各組指定一名同仁參與試用。第三，關於員工旅遊，人事室說要在下週五前收齊報名表，請各組主管提醒同仁。</p>
+        </div>
+
+        <p class="field-label">Gem 的測試結果（請貼上 Gem 的回答）</p>
+        <textarea class="single-textarea" style="min-height:160px;" placeholder="把你的 Gem 回覆的內容貼在這裡…"></textarea>
+
+        <p class="field-label" style="margin-top:16px;">評估你的 Gem（勾選符合的項目）</p>
+        <div class="eval-list">
+          <label class="eval-item" id="eval1">
+            <input type="checkbox" onchange="toggleEval(this, 'eval1')">
+            <span>Gem 有遵守格式要求</span>
+          </label>
+          <label class="eval-item" id="eval2">
+            <input type="checkbox" onchange="toggleEval(this, 'eval2')">
+            <span>Gem 的語氣符合我的預期</span>
+          </label>
+          <label class="eval-item" id="eval3">
+            <input type="checkbox" onchange="toggleEval(this, 'eval3')">
+            <span>我願意在日常工作中使用這個 Gem</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="gem-step">
+        <div class="gem-step-header">
+          <div class="gem-step-num">4</div>
+          <div class="gem-step-title">優化紀錄</div>
+        </div>
+
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:10px;">試用過後，通常會想要調整系統指令。把你的想法記錄下來：</p>
+
+        <p class="field-label">你調整了哪些系統指令？為什麼？</p>
+        <textarea class="single-textarea" style="min-height:100px;" placeholder="例如：原本沒有指定語氣，加上「語氣正式但不失親切」後，回覆感覺更適合在辦公室用…"></textarea>
+
+        <p class="field-label">Gem 在哪個部分表現最讓你滿意？</p>
+        <textarea class="single-textarea" style="min-height:100px;" placeholder="例如：表格格式整理得很乾淨，每次都能自動判斷負責人，省了很多時間…"></textarea>
+      </div>
+
+      <div class="btn-done-wrap">
+        <button class="btn-done" id="doneBtn6" onclick="markDone(6)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== SUMMARY CARD ==================== -->
+  <div class="unit-heading">
+    <span class="unit-heading-text">💬 整體心得</span>
+    <div class="unit-heading-line"></div>
+  </div>
+
+  <div class="card" id="summaryCard">
+    <div class="card-header">
+      <span class="badge" style="background:#16A34A;">總結</span>
+      <h2>工作坊整體心得與反思</h2>
+    </div>
+    <div class="card-body">
+      <p class="section-label">完成所有練習後，請填寫以下總結</p>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-bottom:16px;">
+
+        <div style="background:#F0FDF4; border:1px solid #86EFAC; border-radius:8px; padding:14px;">
+          <p class="note-label" style="color:#16A34A; margin-bottom:8px;">最喜歡的工具或功能</p>
+          <textarea class="note-textarea" style="min-height:80px;" placeholder="哪個工具或哪個功能整體表現最讓你滿意？為什麼？"></textarea>
+        </div>
+
+        <div style="background:#EFF6FF; border:1px solid #93C5FD; border-radius:8px; padding:14px;">
+          <p class="note-label" style="color:#2563EB; margin-bottom:8px;">最大的驚喜或發現</p>
+          <textarea class="note-textarea" style="min-height:80px;" placeholder="有什麼是你原本不知道、這次才發現的？"></textarea>
+        </div>
+
+        <div style="background:#FFF7ED; border:1px solid #FCD34D; border-radius:8px; padding:14px;">
+          <p class="note-label" style="color:#D97706; margin-bottom:8px;">未來工作中的應用場景</p>
+          <textarea class="note-textarea" style="min-height:80px;" placeholder="你打算在哪些日常工作情境中使用 AI 工具？"></textarea>
+        </div>
+
+        <div style="background:#FDF4FF; border:1px solid #D8B4FE; border-radius:8px; padding:14px;">
+          <p class="note-label" style="color:#7C3AED; margin-bottom:8px;">一個你想繼續探索的問題</p>
+          <textarea class="note-textarea" style="min-height:80px;" placeholder="工作坊結束後你最想深入研究或嘗試的是什麼？"></textarea>
+        </div>
+
+      </div>
+
+      <div style="text-align:center; padding: 12px 0 4px;">
+        <button onclick="window.print()" style="
+          background: linear-gradient(135deg, #1E3A5F, #2563EB);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 28px;
+          font-size: 0.9rem;
+          font-weight: 700;
+          cursor: pointer;
+          font-family: inherit;
+          letter-spacing: 0.03em;
+        ">列印 / 儲存為 PDF</button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer class="site-footer">
+  AI 工具實戰工作坊 · 練習題目單 &nbsp;|&nbsp; 2025 &nbsp;|&nbsp; 本頁面可完全離線使用
+</footer>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+  /* -------- Print: auto-expand textareas so content doesn't clip -------- */
+  window.addEventListener('beforeprint', function () {
+    document.querySelectorAll('textarea').forEach(function (ta) {
+      ta.dataset.origHeight = ta.style.height;
+      ta.dataset.origOverflow = ta.style.overflow;
+      ta.style.height = '';          // 清除 inline height 讓 scrollHeight 準確
+      void ta.offsetHeight;          // 強制 reflow
+      ta.style.height = Math.max(ta.scrollHeight, 60) + 'px';
+      ta.style.overflow = 'visible';
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    document.querySelectorAll('textarea').forEach(function (ta) {
+      ta.style.height = ta.dataset.origHeight || '';
+      ta.style.overflow = ta.dataset.origOverflow || '';
+    });
+  });
+
+  /* -------- Copy Prompt -------- */
+  function copyPrompt(elemId, btn) {
+    var el = document.getElementById(elemId);
+    var clone = el.cloneNode(true);
+    var btnInClone = clone.querySelector('.btn-copy');
+    if (btnInClone) btnInClone.remove();
+    var text = clone.textContent.trim();
+    doClipboard(text, btn);
+  }
+
+  function copyGemPrompt(btn) {
+    var ta = document.getElementById('gemSystemPrompt');
+    var text = ta.value.trim();
+    if (!text) { btn.textContent = '（空白）'; setTimeout(function(){ btn.textContent = '複製'; }, 1500); return; }
+    doClipboard(text, btn);
+  }
+
+  function doClipboard(text, btn) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        showCopied(btn);
+      }).catch(function() { fallbackCopy(text, btn); });
+    } else {
+      fallbackCopy(text, btn);
+    }
+  }
+
+  function fallbackCopy(text, btn) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showCopied(btn); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  function showCopied(btn) {
+    var orig = btn.textContent;
+    btn.textContent = '✓ 已複製';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.classList.remove('copied');
+    }, 2000);
+  }
+
+  /* -------- Mark Done & Progress -------- */
+  // 7 blocks: 0(warmup), 1,2,3(unit1), 4,5(unit2), 6(unit4)
+  var done = { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+  var TOTAL = 7;
+
+  function markDone(id) {
+    done[id] = !done[id];
+    var btn = document.getElementById('doneBtn' + id);
+    var indicator = document.getElementById('done' + id);
+    if (done[id]) {
+      btn.textContent = '✓ 已完成';
+      btn.classList.add('active');
+      indicator.classList.add('visible');
+    } else {
+      btn.textContent = '標記完成';
+      btn.classList.remove('active');
+      indicator.classList.remove('visible');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var count = 0;
+    for (var k in done) { if (done[k]) count++; }
+    var pct = Math.round((count / TOTAL) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = '區塊 ' + count + ' / ' + TOTAL + ' 完成';
+  }
+
+  /* -------- Eval Checkbox toggle -------- */
+  function toggleEval(checkbox, itemId) {
+    var item = document.getElementById(itemId);
+    if (checkbox.checked) {
+      item.classList.add('checked');
+    } else {
+      item.classList.remove('checked');
+    }
+  }
+
+  /* -------- Gem Template System -------- */
+  var gemTemplates = {
+    weekly:
+'你是一位專業的行政助理，擅長將工作流水帳整理成清楚的周報。\n\n格式要求：\n- 分為「本週主要工作」、「進行中事項」、「下週計畫」三個區塊\n- 每項條列，每條以「·」開頭\n- 語氣專業簡潔，避免口語化\n- 若使用者未提供完整資訊，主動詢問缺少的部分',
+    official:
+'你是一位熟悉政府公文格式的資深行政人員，協助使用者將草稿改寫為符合公文規範的正式文件。\n\n注意事項：\n- 用詞正式、避免口語\n- 保留所有關鍵資訊，不得刪減\n- 必要時加上公文常用套語（如「敬請 惠予核示」等）\n- 輸出時同時提供修改說明，說明哪些地方做了調整',
+    meeting:
+'你是一位高效率的行政助理，專門將會議記錄整理成行動事項表格。\n\n格式要求：\n- 輸出為表格，欄位包含「負責人」、「工作事項」、「完成期限」\n- 若記錄中未提及負責人或期限，欄位填寫「待確認」\n- 在表格下方補充「會議摘要」一段，3-5 行，說明本次會議的核心決議',
+    custom: ''
+  };
+
+  function updateGemTemplate(type) {
+    // Highlight selected radio option
+    document.querySelectorAll('.radio-option').forEach(function(el) {
+      el.classList.remove('selected');
+    });
+    var radioInputs = document.querySelectorAll('input[name="gemType"]');
+    radioInputs.forEach(function(inp) {
+      if (inp.value === type) {
+        inp.closest('.radio-option').classList.add('selected');
+      }
+    });
+
+    var customWrap = document.getElementById('customThemeWrap');
+    var promptTA = document.getElementById('gemSystemPrompt');
+
+    if (type === 'custom') {
+      customWrap.style.display = 'block';
+      var customVal = document.getElementById('customThemeInput').value.trim();
+      promptTA.value = customVal ? '（請根據你的自訂主題，在此撰寫系統指令…）\n\n主題：' + customVal : '';
+    } else {
+      customWrap.style.display = 'none';
+      promptTA.value = gemTemplates[type];
+    }
+  }
+
+  /* -------- Dynamic header height → progress bar 緊貼 header 下方 -------- */
+  function updateHeaderHeight() {
+    var h = document.querySelector('.site-header').offsetHeight;
+    document.documentElement.style.setProperty('--header-height', h + 'px');
+  }
+  updateHeaderHeight();
+  window.addEventListener('resize', updateHeaderHeight);
+
+  function updateCustomTemplate(val) {
+    var promptTA = document.getElementById('gemSystemPrompt');
+    if (val.trim()) {
+      promptTA.value = '你是一位專業的 AI 助手，專門協助使用者完成以下任務：' + val.trim() + '\n\n請以清楚、結構化的方式回覆，並根據使用者提供的內容做出最有幫助的處理。';
+    } else {
+      promptTA.value = '';
+    }
+  }
+</script>
+
+</body>
+</html>
