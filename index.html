@@ -604,6 +604,30 @@
       margin-top: 8px;
     }
 
+    /* ===== Rendered Table (paste detection) ===== */
+    .btn-edit-table {
+      display: block; width: 100%; text-align: right;
+      font-size: 0.72rem; background: #F8FAFC;
+      border: 1px solid var(--border); border-bottom: none;
+      border-radius: 8px 8px 0 0; padding: 4px 12px;
+      cursor: pointer; font-family: inherit; color: var(--muted);
+      transition: background 0.15s;
+    }
+    .btn-edit-table:hover { background: #E2E8F0; color: var(--navy); }
+    .rendered-table-wrap {
+      border: 1px solid var(--border); border-radius: 0 0 8px 8px;
+      overflow-x: auto; background: #FAFAFA; margin-bottom: 12px;
+    }
+    .rendered-table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.82rem; line-height: 1.5; }
+    .rendered-table-wrap th { background: var(--navy); color: #fff; padding: 6px 10px; text-align: left; font-weight: 600; white-space: nowrap; }
+    .rendered-table-wrap td { border: 1px solid var(--border); padding: 6px 10px; vertical-align: top; color: #1E293B; }
+    .rendered-table-wrap tr:nth-child(even) td { background: #F0F9FF; }
+    .table-hidden { display: none !important; }
+    @media print {
+      .btn-edit-table { display: none !important; }
+      .rendered-table-wrap { overflow: visible; border-radius: 4px; break-inside: avoid; }
+    }
+
     /* ===== AI Tool Links ===== */
     .tool-links-card {
       background: var(--white);
@@ -673,7 +697,9 @@
       /* 版面 */
       html, body { background: #fff !important; font-size: 13px; }
       .container { padding: 0; gap: 0; max-width: 100%; }
-      .site-header { position: static !important; top: auto !important; padding: 6px 16px 5px; }
+      /* 完全移除黏性 header，改在 container 頂部放 .print-title */
+      .site-header { display: none !important; }
+      .print-title { display: block !important; text-align: center; font-size: 1rem; font-weight: 700; color: #1E3A5F; padding-bottom: 6px; border-bottom: 2px solid #1E3A5F; margin-bottom: 10px; letter-spacing: .02em; }
       .site-footer { display: none !important; }
       .progress-bar-wrap { display: none !important; }
 
@@ -714,6 +740,7 @@
       .unit-heading + p {
         break-after: avoid;
         page-break-after: avoid;
+        margin-top: 4px !important; /* 蓋掉 inline margin-top:-12px，防止與標題重疊 */
       }
 
       /* card-header 與內容的第一個元素保持同頁 */
@@ -724,7 +751,7 @@
       .bad-prompt-box, .observe-box, .compare-col,
       .gem-step, details { break-inside: avoid; page-break-inside: avoid; }
 
-      /* textarea：field-sizing 支援的瀏覽器自動展高；其餘由 beforeprint JS 補強 */
+      /* textarea 列印展高：field-sizing 接管（JS 會清除 inline height 讓它生效） */
       textarea,
       .compare-textarea,
       .note-textarea,
@@ -735,6 +762,7 @@
         background: #fff !important;
         field-sizing: content;
         max-height: none !important;
+        /* 不設 height，讓 field-sizing:content 自由伸展 */
       }
 
       /* 顏色保留（色塊背景、徽章） */
@@ -780,6 +808,8 @@
 
 <!-- ===== MAIN CONTENT ===== -->
 <div class="container">
+  <!-- 僅列印時顯示，取代被隱藏的 sticky header -->
+  <div class="print-title" style="display:none;">AI 工具實戰工作坊 — 練習題目單</div>
 
   <!-- ==================== AI TOOL LINKS ==================== -->
   <div class="tool-links-card">
@@ -1358,20 +1388,27 @@
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
-  /* -------- Print: auto-expand textareas so content doesn't clip -------- */
+  /* -------- Print: textarea 自動展高 -------- */
   window.addEventListener('beforeprint', function () {
+    var supportsFS = typeof CSS !== 'undefined' && CSS.supports && CSS.supports('field-sizing', 'content');
     document.querySelectorAll('textarea').forEach(function (ta) {
-      ta.dataset.origHeight = ta.style.height;
+      ta.dataset.origHeight   = ta.style.height;
       ta.dataset.origOverflow = ta.style.overflow;
-      ta.style.height = '';          // 清除 inline height 讓 scrollHeight 準確
-      void ta.offsetHeight;          // 強制 reflow
-      ta.style.height = Math.max(ta.scrollHeight, 60) + 'px';
+      if (supportsFS) {
+        // field-sizing:content 已在列印 CSS 設定，清掉 inline height 讓它接管
+        ta.style.removeProperty('height');
+      } else {
+        // 舊瀏覽器：A4 比螢幕窄、換行更多，乘 2 確保不截斷
+        ta.style.height = '';
+        void ta.offsetHeight;
+        ta.style.height = Math.max(ta.scrollHeight * 2, 60) + 'px';
+      }
       ta.style.overflow = 'visible';
     });
   });
   window.addEventListener('afterprint', function () {
     document.querySelectorAll('textarea').forEach(function (ta) {
-      ta.style.height = ta.dataset.origHeight || '';
+      ta.style.height   = ta.dataset.origHeight   || '';
       ta.style.overflow = ta.dataset.origOverflow || '';
     });
   });
@@ -1506,6 +1543,95 @@
   }
   updateHeaderHeight();
   window.addEventListener('resize', updateHeaderHeight);
+
+  /* -------- Table Paste Handler -------- */
+  function looksLikeTable(text) {
+    var lines = text.trim().split('\n').filter(function(l) { return l.trim(); });
+    if (lines.length < 2) return false;
+    // Markdown 表格：含 | 的行數 >= 2
+    if (lines.filter(function(l){ return l.includes('|'); }).length >= 2) return 'markdown';
+    // CSV：每行含逗號數 >= 2，且多行
+    if (lines.filter(function(l){ return (l.match(/,/g)||[]).length >= 2; }).length >= 2) return 'csv';
+    return false;
+  }
+
+  function parseMarkdownTable(text) {
+    var rows = [];
+    text.trim().split('\n').forEach(function(line) {
+      if (!line.trim() || /^[\s|:\-]+$/.test(line.trim())) return;
+      var cells = line.split('|').map(function(c){ return c.trim(); });
+      if (cells[0] === '') cells.shift();
+      if (cells.length && cells[cells.length-1] === '') cells.pop();
+      if (cells.length) rows.push(cells);
+    });
+    return rows;
+  }
+
+  function parseCsv(text) {
+    return text.trim().split('\n').map(function(line) {
+      var cells = [], inQ = false, cell = '';
+      for (var i = 0; i < line.length; i++) {
+        var c = line[i];
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { cells.push(cell.trim()); cell = ''; }
+        else { cell += c; }
+      }
+      cells.push(cell.trim());
+      return cells;
+    });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function buildTableHtml(rows) {
+    if (!rows || rows.length < 1) return '';
+    var h = '<table><thead><tr>';
+    rows[0].forEach(function(c){ h += '<th>' + escHtml(c) + '</th>'; });
+    h += '</tr></thead><tbody>';
+    for (var i = 1; i < rows.length; i++) {
+      h += '<tr>';
+      rows[i].forEach(function(c){ h += '<td>' + escHtml(c).replace(/\n/g,'<br>') + '</td>'; });
+      h += '</tr>';
+    }
+    h += '</tbody></table>';
+    return h;
+  }
+
+  function showTableView(ta, rawText, tableHtml) {
+    ta.value = rawText;
+    ta.classList.add('table-hidden');
+    var editBtn = document.createElement('button');
+    editBtn.className = 'btn-edit-table';
+    editBtn.type = 'button';
+    editBtn.textContent = '✏️ 切換回文字模式';
+    var tableWrap = document.createElement('div');
+    tableWrap.className = 'rendered-table-wrap';
+    tableWrap.innerHTML = tableHtml;
+    var outer = document.createElement('div');
+    outer.appendChild(editBtn);
+    outer.appendChild(tableWrap);
+    editBtn.onclick = function() {
+      outer.remove();
+      ta.classList.remove('table-hidden');
+      ta.focus();
+    };
+    ta.parentNode.insertBefore(outer, ta.nextSibling);
+  }
+
+  document.querySelectorAll('textarea').forEach(function(ta) {
+    ta.addEventListener('paste', function(e) {
+      var text = (e.clipboardData || window.clipboardData).getData('text');
+      var type = looksLikeTable(text);
+      if (!type) return;
+      e.preventDefault();
+      var rows = type === 'markdown' ? parseMarkdownTable(text) : parseCsv(text);
+      var html = buildTableHtml(rows);
+      if (html) showTableView(ta, text, html);
+      else ta.value = text;
+    });
+  });
 
   function updateCustomTemplate(val) {
     var promptTA = document.getElementById('gemSystemPrompt');
