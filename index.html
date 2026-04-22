@@ -751,18 +751,21 @@
       .bad-prompt-box, .observe-box, .compare-col,
       .gem-step, details { break-inside: avoid; page-break-inside: avoid; }
 
-      /* textarea 列印展高：field-sizing 接管（JS 會清除 inline height 讓它生效） */
+      /* textarea 列印展高 */
       textarea,
       .compare-textarea,
       .note-textarea,
       .single-textarea {
         border: 1px solid #aaa !important;
-        resize: none;
+        resize: none !important;
         overflow: visible !important;
         background: #fff !important;
-        field-sizing: content;
+        width: 100% !important;        /* 禁止橫向撐開欄位 */
         max-height: none !important;
-        /* 不設 height，讓 field-sizing:content 自由伸展 */
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        white-space: pre-wrap !important;
+        field-sizing: content !important; /* Chrome 123+ 自動展高 */
       }
 
       /* 顏色保留（色塊背景、徽章） */
@@ -1390,19 +1393,11 @@
 <script>
   /* -------- Print: textarea 自動展高 -------- */
   window.addEventListener('beforeprint', function () {
-    var supportsFS = typeof CSS !== 'undefined' && CSS.supports && CSS.supports('field-sizing', 'content');
     document.querySelectorAll('textarea').forEach(function (ta) {
       ta.dataset.origHeight   = ta.style.height;
       ta.dataset.origOverflow = ta.style.overflow;
-      if (supportsFS) {
-        // field-sizing:content 已在列印 CSS 設定，清掉 inline height 讓它接管
-        ta.style.removeProperty('height');
-      } else {
-        // 舊瀏覽器：A4 比螢幕窄、換行更多，乘 2 確保不截斷
-        ta.style.height = '';
-        void ta.offsetHeight;
-        ta.style.height = Math.max(ta.scrollHeight * 2, 60) + 'px';
-      }
+      // 清除 inline height，讓列印 CSS 的 field-sizing:content 接管
+      ta.style.removeProperty('height');
       ta.style.overflow = 'visible';
     });
   });
