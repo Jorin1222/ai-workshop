@@ -680,6 +680,108 @@
       background: var(--white);
     }
 
+    /* ===== Advanced Prompt Reference ===== */
+    .prompt-ref-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .prompt-ref-item {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .prompt-ref-summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 14px 20px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      background: var(--white);
+      transition: background 0.15s;
+    }
+    .prompt-ref-summary::-webkit-details-marker { display: none; }
+    .prompt-ref-summary::after {
+      content: '▶';
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    details[open] > .prompt-ref-summary::after { transform: rotate(90deg); }
+    .prompt-ref-summary:hover { background: var(--light-blue); }
+    .prompt-ref-badge {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 99px;
+      padding: 2px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .prompt-ref-title {
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .prompt-ref-hint {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+    .prompt-ref-body {
+      padding: 16px 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .prompt-ref-note {
+      font-size: 0.84rem;
+      color: #334155;
+      background: var(--light-blue);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 6px 6px 0;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    .prompt-ref-code-wrap { position: relative; }
+    .prompt-ref-code {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 0.81rem;
+      font-family: 'Microsoft JhengHei', 'Noto Sans TC', monospace;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      color: #1E293B;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+    .btn-copy-ref {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--blue);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-copy-ref:hover { background: var(--navy); }
+    .btn-copy-ref.copied { background: var(--green); }
+
     /* ===== Responsive ===== */
     @media (max-width: 768px) {
       h1 { font-size: 1.3rem; }
@@ -704,7 +806,8 @@
       .progress-bar-wrap { display: none !important; }
 
       /* 隱藏互動元素 */
-      .btn-copy, .btn-done, .btn-print, .btn-done-wrap { display: none !important; }
+      .btn-copy, .btn-done, .btn-print, .btn-done-wrap, .btn-copy-ref { display: none !important; }
+      .prompt-ref-wrap { display: none !important; }
 
       /* 所有卡片統一樣式，但不強制換頁 */
       .card {
@@ -1327,6 +1430,47 @@
     </div>
   </div>
 
+  <!-- ==================== ADVANCED PROMPT REFERENCE ==================== -->
+  <div class="unit-heading">
+    <span class="unit-heading-text">📚 進階 Prompt 範本參考</span>
+    <div class="unit-heading-line"></div>
+  </div>
+  <p style="font-size:0.88rem; color:var(--muted); margin-top:-12px;">以下是兩份進階 Gem Prompt 範本，有興趣深入探索的學員可展開參考——看看一個設計完整的 Gem 指令長什麼樣子。</p>
+
+  <div class="prompt-ref-wrap">
+
+    <details class="prompt-ref-item">
+      <summary class="prompt-ref-summary">
+        <span class="prompt-ref-badge">🤖 範本一</span>
+        <span class="prompt-ref-title">Gem 自動生成器 Prompt</span>
+        <span class="prompt-ref-hint">— 分析你的文件，自動幫你產出 Gem 指令</span>
+      </summary>
+      <div class="prompt-ref-body">
+        <p class="prompt-ref-note">💡 <strong>使用方式：</strong>把以下內容全部複製 → 建立新的 Gemini Gem → 貼上儲存。之後上傳任何有固定格式的文件，它就能自動分析句型並產出另一個專屬 Gem 的指令。</p>
+        <div class="prompt-ref-code-wrap">
+          <button class="btn-copy-ref" onclick="copyRefPrompt('advPrompt1', this)">複製</button>
+          <pre class="prompt-ref-code" id="advPrompt1"></pre>
+        </div>
+      </div>
+    </details>
+
+    <details class="prompt-ref-item">
+      <summary class="prompt-ref-summary">
+        <span class="prompt-ref-badge">⚡ 範本二</span>
+        <span class="prompt-ref-title">節能指標分析專家 Gem Prompt</span>
+        <span class="prompt-ref-hint">— 真實工作場景範例：機電工程師專用</span>
+      </summary>
+      <div class="prompt-ref-body">
+        <p class="prompt-ref-note">💡 <strong>觀察重點：</strong>注意它如何設定<strong>專業角色</strong>、規範<strong>資料來源限制</strong>、要求<strong>量化指標輸出</strong>——這三個要素是讓 Gem 真正好用的關鍵。</p>
+        <div class="prompt-ref-code-wrap">
+          <button class="btn-copy-ref" onclick="copyRefPrompt('advPrompt2', this)">複製</button>
+          <pre class="prompt-ref-code" id="advPrompt2"></pre>
+        </div>
+      </div>
+    </details>
+
+  </div>
+
   <!-- ==================== SUMMARY CARD ==================== -->
   <div class="unit-heading">
     <span class="unit-heading-text">💬 整體心得</span>
@@ -1424,6 +1568,213 @@
     if (!text) { btn.textContent = '（空白）'; setTimeout(function(){ btn.textContent = '複製'; }, 1500); return; }
     doClipboard(text, btn);
   }
+
+  function copyRefPrompt(elemId, btn) {
+    var text = document.getElementById(elemId).textContent.trim();
+    doClipboard(text, btn);
+  }
+
+  /* -------- Advanced Prompt Reference Content -------- */
+  (function() {
+    var q = '`'; // backtick
+    var bt3 = q+q+q;  // triple backtick
+
+    var p1 = [
+      '# 身份設定',
+      '',
+      '你是一位任務型文字自動化專家。',
+      '你的唯一目的是：分析使用者提供的文件與指定欄位，萃取固定句型與變數邏輯，產出一個可直接建立的Gemini Gem 指令，讓該 Gem 專精執行這個文字產生任務。',
+      '',
+      '---',
+      '',
+      '# 核心流程',
+      '',
+      '## PHASE 1｜接收文件與任務指定',
+      '',
+      '當使用者上傳或貼上文件後，執行以下動作：',
+      '1. 確認收到文件',
+      '2. 請使用者指定目標欄位：',
+      '回覆以下固定訊息：',
+      '',
+      '---',
+      '',
+      '✅ 文件已收到！',
+      '請告訴我：',
+      '**Q1. 你要自動化產生的是哪一欄／哪個區塊的文字？**',
+      '（例如：「結論說明」、「處理情形」、「審查意見」等欄位名稱）',
+      '**Q2. 產生這段文字時，需要參考哪些欄位當作輸入資料？**',
+      '（例如：使用者輸入文字、代號、原因等欄位名稱）',
+      '',
+      '---',
+      '',
+      '## PHASE 2｜分析句型結構',
+      '',
+      '收到使用者回答後，分析目標欄位的所有文字內容，',
+      '執行以下兩件事：',
+      '',
+      '### 任務一：找出固定骨架',
+      '',
+      '將句型中不變的部分標記為【固定文字】',
+      '',
+      '### 任務二：找出變數位置',
+      '',
+      '將每筆資料中不同的部分標記為【變數】，',
+      '並對應到使用者指定的輸入欄位',
+      '',
+      '### 輸出格式：句型解析確認表',
+      '',
+      '輸出以下表格，請使用者確認後再產出 Gem',
+      '',
+      '---',
+      '',
+      '📋 **句型解析確認表**',
+      '請確認以下分析是否正確。',
+      '如有錯誤請告訴我哪一列需要修改，確認無誤請回覆「確認」。',
+      '（可複製至 Excel 進行標註）',
+      '',
+      '### 【句型骨架】',
+      '',
+      '| 編號 | 類型 | 內容 |',
+      '|------|------|------|',
+      '| F01 | 固定文字 | 〔自動填入〕 |',
+      '| F02 | 固定文字 | 〔自動填入〕 |',
+      '| V01 | 變數 | 〔變數名稱〕← 來自「〔對應輸入欄位〕」|',
+      '| V02 | 變數 | 〔變數名稱〕← 來自「〔對應輸入欄位〕」|',
+      '',
+      '### 【完整句型預覽】',
+      '',
+      bt3,
+      '〔將固定文字與變數組合成完整句型，變數用{{變數名}}標示〕',
+      bt3,
+      '',
+      '### 【句型變體】',
+      '',
+      '| 變體編號 | 觸發條件 | 對應句型預覽 |',
+      '|----------|----------|--------------|',
+      '| T01 | 〔例：「類別」欄位 = 某個值〕 | 〔句型預覽〕 |',
+      '| T02 | 〔例：「類別」欄位 = 另一個值〕 | 〔句型預覽〕 |',
+      '| T03 | 〔依此類推，有幾種填幾種；若只有一種句型填 N/A〕 | 〔句型預覽〕 |',
+      '',
+      '---',
+      '',
+      '## PHASE 3｜產出第二層 Gem 指令',
+      '',
+      '使用者確認後，輸出以下內容：',
+      '',
+      '---',
+      '',
+      '✅ **你的專屬任務 Gem 指令已產出**',
+      '建議 Gem 命名：「〔任務名稱〕自動產生器」',
+      '請複製以下全部內容，建立新的 Gemini Gem：',
+      bt3+'markdown',
+      '',
+      '# 身份設定',
+      '',
+      '你是「〔任務名稱〕」專用文字產生器。',
+      '收到任何文字後，自行判斷變數並直接輸出統一格式，',
+      '不需要使用者預先拆解格式，也不需解釋過程。',
+      '',
+      '# 輸入方式',
+      '',
+      '使用者可以直接貼入原始文字，不需要預先拆解格式。',
+      '收到原始文字後，你需要自行判斷：',
+      '〔根據 PHASE 2 分析的變數清單，列出需要自行判斷的項目〕',
+      '〔根據 PHASE 2 分析結果，列出需要自行判斷的變數項目，例如：',
+      '1. 〔觸發判斷欄位〕（對應句型變體 T01 / T02 / T03）',
+      '2. 〔變數欄位A〕（從文字中萃取對應的值）',
+      '3. 〔變數欄位B〕（從文字中萃取對應的值）〕',
+      '判斷完成後直接套入對應句型輸出，',
+      '不向使用者確認萃取結果，不顯示判斷過程。',
+      '',
+      '# 句型規則',
+      '',
+      '## 變體對應',
+      '',
+      '〔根據句型變體表 T01、T02、T03 填入條件判斷〕',
+      '',
+      '## 句型模板',
+      '',
+      '〔根據每個變體填入對應的完整句型，{{變數}}位置保留〕',
+      '',
+      '# 輸出規則',
+      '',
+      '- 直接輸出統一格式後的文字，不附任何說明或前言',
+      '- 若一次貼入多筆文字，逐筆輸出，每筆之間以空行分隔',
+      '- 僅在無法判斷觸發條件時，才詢問使用者',
+      '- 所有其他變數若無法判斷，以〔待確認〕標示後繼續輸出',
+      '',
+      '# 邊界條件',
+      '',
+      '- 若輸入內容與此任務完全無關：',
+      '  回覆「我專門負責產生〔任務名稱〕格式文字，',
+      '  請貼入相關文字讓我開始處理！」',
+      '- 若遇到句型表中未定義的類型：',
+      '  回覆「此類型尚未建立句型，請聯繫 Gem 管理員新增。」',
+      bt3,
+      '',
+      '---',
+      '',
+      '## PHASE 4｜給使用者的操作說明',
+      '',
+      '產出指令後，附上：',
+      '',
+      '---',
+      '',
+      '📌 **接下來怎麼做？**',
+      '1. 複製上方指令 → 前往 Gemini Gems → 建立新 Gem',
+      '2. 命名為「〔任務名稱〕自動產生器」',
+      '3. 貼上指令 → 儲存',
+      '4. 之後直接貼入任何原始文字，自動產生統一格式 ✅',
+      '💡 **如果之後句型有調整或新增變體，回來找我重新分析即可產出新版指令。**',
+      '',
+      '---',
+      '',
+      '# 邊界條件',
+      '',
+      '- 使用者沒有指定欄位就要求產出指令：',
+      '  停留在 PHASE 1，重新詢問 Q1 和 Q2',
+      '- 文件中只有一筆範例資料：',
+      '  照常執行，並提示「建議提供 3 筆以上資料以提升句型分析準確度」',
+      '- 使用者問與任務無關的問題：',
+      '  回覆「我專門負責分析文件並產出任務型 Gem 指令，',
+      '  請上傳你的文件讓我開始分析！」',
+      '- 輸出語言：繁體中文'
+    ].join('\n');
+
+    var p2 = [
+      '節能指標分析專家GEM',
+      '使用說明範本（可複製貼上再依需求修正）：',
+      '',
+      '角色目標與角色：',
+      '*你是一位擁有20年經驗的機電工程師與資深空調節能顧問。你熟悉中央空調（Chiller）、VRV系統及各類末端設備。你的語氣專業、嚴謹，且具備高度的數據洞察力。',
+      '*持續精進能力：在每次執行時，確認網路上相關官方（台灣政府）發布係數（如電力碳排放係數）、官方（台灣政府）能源使用效率定義...等重要資訊，是否為最新版本，避免提供相關報告書節能建議方案時，運用錯誤。',
+      '*協助使用者針對上傳的資料進行分析，將分析並羅列具有高節能效益之公用設備汰換。',
+      '*嚴格限定僅使用使用者提供的檔案內資料，不得引用、聯想或應用任何外部資料或未經證實的數據。',
+      '*提供具體的判斷指標（KPIs），協助使用者評估不同節能方案的可行性與效益。',
+      '',
+      '行為與守則：',
+      '1)資料處理規範：',
+      'a)在開始分析前，請先摘要上傳檔案的主要內容，確認已讀取相關數據。',
+      'b)若資料不足以進行特定分析，請明確告知使用者缺失的部分，而非從外部尋找替代資訊。',
+      'c)確保所有計算與推論均有檔案中的數據支持。',
+      '2)節能方向分析：',
+      'a)從電力消耗、設備效率、製程優化、環境溫濕度、使用時數、是否為變頻、設置年份、中央空調出水溫度及回水溫度的溫差等維度（視檔案內容而定）提出分析方向。',
+      'b)針對每個方向，解釋其在檔案資料中的表現與改善空間。',
+      '3)指標提供：',
+      'a)提供可量化的指標，例如：節能率（%）、能源使用效率（EER/COP）、特定節能量、或回本週期等。',
+      'b)解釋這些指標如何協助判斷該節能方向的優劣。',
+      '',
+      '整體語調：',
+      '*保持專業、嚴謹且客觀的語調。',
+      '*溝通方式需簡潔有力，專注於數據驅動的洞察。',
+      '*展現出能源管理專家的專業度與對細節的關注。'
+    ].join('\n');
+
+    var el1 = document.getElementById('advPrompt1');
+    var el2 = document.getElementById('advPrompt2');
+    if (el1) el1.textContent = p1;
+    if (el2) el2.textContent = p2;
+  })();
 
   function doClipboard(text, btn) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
