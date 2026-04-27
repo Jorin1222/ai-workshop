@@ -193,6 +193,8 @@
     .card-header.unit2 { background: linear-gradient(135deg, #1E3A5F, #3b1d78); }
     /* Unit 4 header */
     .card-header.unit4 { background: linear-gradient(135deg, #1E3A5F, #1d5544); }
+    /* Unit 5 header */
+    .card-header.unit5 { background: linear-gradient(135deg, #1E3A5F, #0e7490); }
 
     /* ===== Card Body ===== */
     .card-body { padding: 20px; }
@@ -1471,6 +1473,115 @@
 
   </div>
 
+  <!-- ==================== UNIT 5 HEADING ==================== -->
+  <div class="unit-heading">
+    <span class="unit-heading-text">🌐 單元五｜AI 生成靜態網頁</span>
+    <div class="unit-heading-line"></div>
+  </div>
+
+  <p style="font-size:0.88rem; color:var(--muted); margin-top:-12px;">不需要任何程式基礎——用 Gemini 的 Canvas 功能，直接對話描述需求，就能取得可在瀏覽器開啟的 HTML 儀表板頁面。</p>
+
+  <!-- ==================== CARD 7 - HTML Generation ==================== -->
+  <div class="card" id="card7">
+    <div class="card-header unit5">
+      <span class="badge" style="background:#0891b2;">單元五</span>
+      <h2>用 AI 生成靜態 HTML 頁面</h2>
+      <span class="done-indicator" id="done7">✅</span>
+    </div>
+    <div class="card-body">
+
+      <!-- Step 1 -->
+      <div class="gem-step">
+        <div class="gem-step-header">
+          <div class="gem-step-num">1</div>
+          <div class="gem-step-title">用 Gemini Canvas 生成 HTML</div>
+        </div>
+
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px;">開啟 Gemini，在對話框<strong>左下角</strong>點選 <strong>Canvas</strong> 模式，然後貼入以下示範 Prompt：</p>
+
+        <div class="prompt-wrap">
+          <div class="prompt-box" id="prompt_u5_1">幫我做一個隨便的儀表板demo頁面+該儀錶板的宣傳頁面，總共要有六種圖表，以深色底為主，資料及主題你幫我訂。最後我要複製到記事本，轉成可以在一般瀏覽器開啟的頁面。<button class="btn-copy" onclick="copyPrompt('prompt_u5_1', this)">複製</button></div>
+        </div>
+
+        <div class="material-box" style="margin-top:12px; background:#F0FDF4; border-color:#86EFAC;">
+          <p class="mat-title">💡 取得 HTML 程式碼的方式</p>
+          <p style="margin-bottom:0;">Gemini 生成完成後，在 Canvas 畫面右上角點「<strong>複製</strong>」按鈕，即可複製完整的 HTML 程式碼。</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="gem-step">
+        <div class="gem-step-header">
+          <div class="gem-step-num">2</div>
+          <div class="gem-step-title">貼到記事本，存成 .html 檔 ── 大功告成！</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0;">
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);">
+            <span style="background:var(--navy); color:#fff; border-radius:99px; padding:2px 10px; font-size:0.78rem; font-weight:700; white-space:nowrap; flex-shrink:0; margin-top:1px;">① 開啟記事本</span>
+            <span style="font-size:0.9rem;">Windows 搜尋「記事本」或「Notepad」</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);">
+            <span style="background:var(--navy); color:#fff; border-radius:99px; padding:2px 10px; font-size:0.78rem; font-weight:700; white-space:nowrap; flex-shrink:0; margin-top:1px;">② 貼上程式碼</span>
+            <span style="font-size:0.9rem;">按 <kbd style="background:#F1F5F9; border:1px solid #CBD5E1; border-radius:4px; padding:1px 6px; font-size:0.82rem;">Ctrl+V</kbd> 貼上複製的 HTML 程式碼</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);">
+            <span style="background:var(--navy); color:#fff; border-radius:99px; padding:2px 10px; font-size:0.78rem; font-weight:700; white-space:nowrap; flex-shrink:0; margin-top:1px;">③ 另存新檔</span>
+            <span style="font-size:0.9rem;">檔案 → 另存新檔 → 檔名輸入 <code style="background:#F1F5F9; padding:1px 5px; border-radius:4px; font-size:0.82rem;">dashboard.html</code> → 存檔類型選「<strong>所有檔案</strong>」→ 儲存</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:10px 0;">
+            <span style="background:#16A34A; color:#fff; border-radius:99px; padding:2px 10px; font-size:0.78rem; font-weight:700; white-space:nowrap; flex-shrink:0; margin-top:1px;">④ 開啟！</span>
+            <span style="font-size:0.9rem;">找到剛存的 .html 檔案，直接雙擊用瀏覽器開啟 ✅</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Play -->
+      <div class="gem-step" style="background:#F5F3FF; border-color:#DDD6FE;">
+        <div class="gem-step-header">
+          <div class="gem-step-num" style="background:#7C3AED; font-size:1rem;">🚀</div>
+          <div class="gem-step-title" style="color:#6D28D9;">進階玩法</div>
+        </div>
+
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:16px;">完成基礎版後，在<strong>同一個 Canvas 對話中</strong>繼續下指令，試試以下進階操作：</p>
+
+        <!-- Advanced 1: Data template -->
+        <p class="field-label">🗂️ 進階一：讓 AI 產出數據模板，支援 Excel 匯入更新</p>
+        <p style="font-size:0.84rem; color:var(--muted); margin-bottom:8px;">希望之後可以用 Excel 更新數據？複製這個 Prompt 繼續對話：</p>
+        <div class="prompt-wrap">
+          <div class="prompt-box" id="prompt_u5_2">把所有圖表的內容匯出成xlsx檔案範本，並把現在的頁面改成支援匯入範本，讓我可以更新數據<button class="btn-copy" onclick="copyPrompt('prompt_u5_2', this)">複製</button></div>
+        </div>
+
+        <!-- Advanced 2: Style change -->
+        <p class="field-label" style="margin-top:18px;">🎨 進階二：改變風格</p>
+        <p style="font-size:0.84rem; color:var(--muted); margin-bottom:10px;">不喜歡現在的設計？試試這幾個風格切換指令（直接貼到同一個對話）：</p>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div class="prompt-wrap">
+            <div class="prompt-box" id="prompt_u5_s1" style="font-size:0.85rem;">把這個頁面改成亮色系設計，白色底色搭配藍色主色調，保持現代感但更適合日間使用<button class="btn-copy" onclick="copyPrompt('prompt_u5_s1', this)">複製</button></div>
+          </div>
+          <div class="prompt-wrap">
+            <div class="prompt-box" id="prompt_u5_s2" style="font-size:0.85rem;">幫我加上數字跑動的計數動畫，以及圖表進場時的漸現效果，讓頁面更有活力<button class="btn-copy" onclick="copyPrompt('prompt_u5_s2', this)">複製</button></div>
+          </div>
+          <div class="prompt-wrap">
+            <div class="prompt-box" id="prompt_u5_s3" style="font-size:0.85rem;">改成日式極簡風格，米白色底搭配墨綠色強調色，移除多餘的裝飾元素，讓數據更突出<button class="btn-copy" onclick="copyPrompt('prompt_u5_s3', this)">複製</button></div>
+          </div>
+          <div class="prompt-wrap">
+            <div class="prompt-box" id="prompt_u5_s4" style="font-size:0.85rem;">改成正式企業年報風格，深海軍藍底配金色細節，整體感覺更適合對外報告使用<button class="btn-copy" onclick="copyPrompt('prompt_u5_s4', this)">複製</button></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="field-label" style="margin-top:16px;">你生成的頁面效果如何？有什麼有趣或意外的地方？</p>
+      <textarea class="single-textarea" style="min-height:90px;" placeholder="例如：AI 自動選了科技感的主題，圖表用了動畫效果，比預期漂亮很多…"></textarea>
+
+      <div class="btn-done-wrap">
+        <button class="btn-done" id="doneBtn7" onclick="markDone(7)">標記完成</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ==================== SUMMARY CARD ==================== -->
   <div class="unit-heading">
     <span class="unit-heading-text">💬 整體心得</span>
@@ -1808,9 +1919,9 @@
   }
 
   /* -------- Mark Done & Progress -------- */
-  // 7 blocks: 0(warmup), 1,2,3(unit1), 4,5(unit2), 6(unit4)
-  var done = { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
-  var TOTAL = 7;
+  // 8 blocks: 0(warmup), 1,2,3(unit1), 4,5(unit2), 6(unit4), 7(unit5)
+  var done = { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false };
+  var TOTAL = 8;
 
   function markDone(id) {
     done[id] = !done[id];
