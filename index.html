@@ -1470,40 +1470,67 @@
 
   <!-- ==================== ADVANCED PROMPT REFERENCE ==================== -->
   <div class="unit-heading">
-    <span class="unit-heading-text">📚 進階 Prompt 範本參考</span>
+    <span class="unit-heading-text">📚 進階參考</span>
     <div class="unit-heading-line"></div>
   </div>
-  <p style="font-size:0.88rem; color:var(--muted); margin-top:-12px;">以下是兩份進階 Gem Prompt 範本，有興趣深入探索的學員可展開參考——看看一個設計完整的 Gem 指令長什麼樣子。</p>
+  <p style="font-size:0.88rem; color:var(--muted); margin-top:-12px;">工具連結與進階 Prompt 範本，有興趣的學員可展開參考。</p>
 
   <div class="prompt-ref-wrap">
 
-    <details class="prompt-ref-item">
-      <summary class="prompt-ref-summary">
-        <span class="prompt-ref-badge">🤖 範本一</span>
-        <span class="prompt-ref-title">Gem 自動生成器 Prompt</span>
-        <span class="prompt-ref-hint">— 分析你的文件，自動幫你產出 Gem 指令</span>
-      </summary>
-      <div class="prompt-ref-body">
-        <p class="prompt-ref-note">💡 <strong>使用方式：</strong>把以下內容全部複製 → 建立新的 Gemini Gem → 貼上儲存。之後上傳任何有固定格式的文件，它就能自動分析句型並產出另一個專屬 Gem 的指令。</p>
-        <div class="prompt-ref-code-wrap">
-          <button class="btn-copy-ref" onclick="copyRefPrompt('advPrompt1', this)">複製</button>
-          <pre class="prompt-ref-code" id="advPrompt1"></pre>
+    <!-- 區塊一：圖表生成 Gem 連結 -->
+    <div class="prompt-ref-item">
+      <div style="display:flex; align-items:center; gap:12px; padding:14px 20px; flex-wrap:wrap;">
+        <span class="prompt-ref-badge">🤖 工具</span>
+        <div>
+          <div class="prompt-ref-title">圖表生成 Gem</div>
+          <div class="prompt-ref-hint" style="margin-top:2px;">點擊連結，直接使用已建好的 Gem</div>
         </div>
+        <a class="tool-link-btn gemini"
+           href="https://gemini.google.com/gem/1PL0FBxv8tOHVusGyDSRfyeoJJ7BNOOB3?usp=sharing"
+           target="_blank"
+           style="margin-left:auto; text-decoration:none; padding:8px 18px; font-size:0.85rem;">開啟 Gem ↗</a>
       </div>
-    </details>
+    </div>
 
+    <!-- 區塊二：Prompt 參考（可收合） -->
     <details class="prompt-ref-item">
       <summary class="prompt-ref-summary">
-        <span class="prompt-ref-badge">⚡ 範本二</span>
-        <span class="prompt-ref-title">節能指標分析專家 Gem Prompt</span>
-        <span class="prompt-ref-hint">— 真實工作場景範例</span>
+        <span class="prompt-ref-badge">📋 參考</span>
+        <span class="prompt-ref-title">Prompt 參考</span>
+        <span class="prompt-ref-hint">— 兩份進階 Gem Prompt 範本，展開查看</span>
       </summary>
-      <div class="prompt-ref-body">
-        <p class="prompt-ref-note">💡 <strong>觀察重點：</strong>注意它如何設定<strong>專業角色</strong>、規範<strong>資料來源限制</strong>、要求<strong>量化指標輸出</strong>——這三個要素是讓 Gem 真正好用的關鍵。</p>
-        <div class="prompt-ref-code-wrap">
-          <button class="btn-copy-ref" onclick="copyRefPrompt('advPrompt2', this)">複製</button>
-          <pre class="prompt-ref-code" id="advPrompt2"></pre>
-        </div>
+      <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-top:1px solid var(--border);">
+
+        <details class="prompt-ref-item" style="box-shadow:none;">
+          <summary class="prompt-ref-summary">
+            <span class="prompt-ref-badge">🤖 範本一</span>
+            <span class="prompt-ref-title">Gem 自動生成器 Prompt</span>
+            <span class="prompt-ref-hint">— 分析你的文件，自動幫你產出 Gem 指令</span>
+          </summary>
+          <div class="prompt-ref-body">
+            <p class="prompt-ref-note">💡 <strong>使用方式：</strong>把以下內容全部複製 → 建立新的 Gemini Gem → 貼上儲存。之後上傳任何有固定格式的文件，它就能自動分析句型並產出另一個專屬 Gem 的指令。</p>
+            <div class="prompt-ref-code-wrap">
+              <button class="btn-copy-ref" onclick="copyRefPrompt('advPrompt1', this)">複製</button>
+              <pre class="prompt-ref-code" id="advPrompt1"></pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="prompt-ref-item" style="box-shadow:none;">
+          <summary class="prompt-ref-summary">
+            <span class="prompt-ref-badge">⚡ 範本二</span>
+            <span class="prompt-ref-title">節能指標分析專家 Gem Prompt</span>
+            <span class="prompt-ref-hint">— 真實工作場景範例</span>
+          </summary>
+          <div class="prompt-ref-body">
+            <p class="prompt-ref-note">💡 <strong>觀察重點：</strong>注意它如何設定<strong>專業角色</strong>、規範<strong>資料來源限制</strong>、要求<strong>量化指標輸出</strong>——這三個要素是讓 Gem 真正好用的關鍵。</p>
+            <div class="prompt-ref-code-wrap">
+              <button class="btn-copy-ref" onclick="copyRefPrompt('advPrompt2', this)">複製</button>
+              <pre class="prompt-ref-code" id="advPrompt2"></pre>
+            </div>
+          </div>
+        </details>
+
       </div>
     </details>
 
