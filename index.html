@@ -122,40 +122,6 @@
     }
     .btn-clear-data:hover { color: var(--red); border-color: var(--red); }
 
-    /* ===== Jump Nav ===== */
-    .jump-nav {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 5px 12px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      overflow-x: auto;
-      scrollbar-width: none;
-      position: sticky;
-      top: var(--nav-top, 68px);
-      z-index: 98;
-      flex-wrap: nowrap;
-    }
-    .jump-nav::-webkit-scrollbar { display: none; }
-    .jump-btn {
-      background: var(--light-blue);
-      color: var(--navy);
-      border: none;
-      border-radius: 99px;
-      padding: 4px 13px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: inherit;
-      flex-shrink: 0;
-      transition: background 0.2s, color 0.2s;
-    }
-    .jump-btn:hover { background: #DBEAFE; }
-    .jump-btn.active { background: var(--navy); color: var(--white); }
-    @media print { .jump-nav { display: none !important; } }
-
     /* ===== Auto-save Toast ===== */
     .save-toast {
       position: fixed;
@@ -982,15 +948,6 @@
     <button class="btn-print" style="margin-left:0;" onclick="window.print()">列印 / 儲存 PDF</button>
   </div>
 </div>
-<nav class="jump-nav" aria-label="快速跳轉">
-  <button class="jump-btn" data-sec="warmup"   onclick="jumpTo('sec-warmup')">🔥 暖身</button>
-  <button class="jump-btn" data-sec="unit1"    onclick="jumpTo('sec-unit1')">📌 單元一</button>
-  <button class="jump-btn" data-sec="unit2"    onclick="jumpTo('sec-unit2')">✏️ 單元二</button>
-  <button class="jump-btn" data-sec="unit4"    onclick="jumpTo('sec-unit4')">⚙️ 單元四</button>
-  <button class="jump-btn" data-sec="unit5"    onclick="jumpTo('sec-unit5')">🌐 單元五</button>
-  <button class="jump-btn" data-sec="advanced" onclick="jumpTo('sec-advanced')">📚 進階</button>
-  <button class="jump-btn" data-sec="summary"  onclick="jumpTo('sec-summary')">💬 心得</button>
-</nav>
 <div class="save-toast" id="saveToast">✓ 已自動儲存</div>
 
 <!-- ===== MAIN CONTENT ===== -->
@@ -1018,7 +975,7 @@
   </div>
 
   <!-- ==================== WARM-UP ==================== -->
-  <div class="unit-heading" id="sec-warmup">
+  <div class="unit-heading">
     <span class="unit-heading-text">🔥 暖身題（Warm-up）</span>
     <div class="unit-heading-line"></div>
   </div>
@@ -1056,7 +1013,7 @@
   </div>
 
   <!-- ==================== UNIT 1 HEADING ==================== -->
-  <div class="unit-heading" id="sec-unit1">
+  <div class="unit-heading">
     <span class="unit-heading-text">📌 單元一｜三工具比較</span>
     <div class="unit-heading-line"></div>
   </div>
@@ -1284,7 +1241,7 @@
   </div>
 
   <!-- ==================== UNIT 2 HEADING ==================== -->
-  <div class="unit-heading" id="sec-unit2">
+  <div class="unit-heading">
     <span class="unit-heading-text">✏️ 單元二｜Prompt 改寫練習</span>
     <div class="unit-heading-line"></div>
   </div>
@@ -1382,7 +1339,7 @@
   </div>
 
   <!-- ==================== UNIT 4 HEADING ==================== -->
-  <div class="unit-heading" id="sec-unit4">
+  <div class="unit-heading">
     <span class="unit-heading-text">⚙️ 單元四｜建置 Gem 操作單</span>
     <div class="unit-heading-line"></div>
   </div>
@@ -1512,7 +1469,7 @@
   </div>
 
   <!-- ==================== ADVANCED PROMPT REFERENCE ==================== -->
-  <div class="unit-heading" id="sec-advanced">
+  <div class="unit-heading">
     <span class="unit-heading-text">📚 進階 Prompt 範本參考</span>
     <div class="unit-heading-line"></div>
   </div>
@@ -1553,7 +1510,7 @@
   </div>
 
   <!-- ==================== UNIT 5 HEADING ==================== -->
-  <div class="unit-heading" id="sec-unit5">
+  <div class="unit-heading">
     <span class="unit-heading-text">🌐 單元五｜AI 生成靜態網頁</span>
     <div class="unit-heading-line"></div>
   </div>
@@ -1662,7 +1619,7 @@
   </div>
 
   <!-- ==================== SUMMARY CARD ==================== -->
-  <div class="unit-heading" id="sec-summary">
+  <div class="unit-heading">
     <span class="unit-heading-text">💬 整體心得</span>
     <div class="unit-heading-line"></div>
   </div>
@@ -2080,44 +2037,6 @@
   }
   updateHeaderHeight();
   window.addEventListener('resize', updateHeaderHeight);
-
-  /* -------- Jump Nav -------- */
-  function updateNavTop() {
-    var isMobile = window.innerWidth <= 768;
-    var headerH = isMobile ? 0 : document.querySelector('.site-header').offsetHeight;
-    var progressH = document.querySelector('.progress-bar-wrap').offsetHeight;
-    document.documentElement.style.setProperty('--nav-top', (headerH + progressH) + 'px');
-  }
-  updateNavTop();
-  window.addEventListener('resize', updateNavTop);
-
-  function jumpTo(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    var navBottom = document.querySelector('.jump-nav').getBoundingClientRect().bottom;
-    var targetTop = el.getBoundingClientRect().top + window.scrollY - navBottom - 10;
-    window.scrollTo({ top: targetTop, behavior: 'smooth' });
-  }
-
-  // 滾動時高亮當前區塊對應的跳轉按鈕
-  (function() {
-    var secIds = ['sec-warmup', 'sec-unit1', 'sec-unit2', 'sec-unit4',
-                  'sec-unit5', 'sec-advanced', 'sec-summary'];
-    var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (!entry.isIntersecting) return;
-        var key = entry.target.id.replace('sec-', '');
-        document.querySelectorAll('.jump-btn').forEach(function(btn) {
-          btn.classList.toggle('active', btn.dataset.sec === key);
-        });
-      });
-    }, { threshold: 0, rootMargin: '-5% 0px -80% 0px' });
-
-    secIds.forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) obs.observe(el);
-    });
-  })();
 
   /* -------- Auto Save / Restore (localStorage) -------- */
   var SAVE_KEY = 'ai_ws_v1';
