@@ -108,6 +108,38 @@
       transition: background 0.2s;
     }
     .btn-print:hover { background: var(--blue); }
+    .btn-clear-data {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-clear-data:hover { color: var(--red); border-color: var(--red); }
+
+    /* ===== Auto-save Toast ===== */
+    .save-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1E293B;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 300;
+    }
+    .save-toast.show { opacity: 1; transform: translateY(0); }
+    @media print { .save-toast, .btn-clear-data { display: none !important; } }
 
     /* ===== Section Divider (unit heading) ===== */
     .unit-heading {
@@ -910,9 +942,13 @@
   <div class="progress-track">
     <div class="progress-fill" id="progressFill"></div>
   </div>
-  <span class="progress-count" id="progressCount">區塊 0 / 7 完成</span>
-  <button class="btn-print" onclick="window.print()">列印 / 儲存 PDF</button>
+  <span class="progress-count" id="progressCount">區塊 0 / 8 完成</span>
+  <div style="margin-left:auto; display:flex; gap:8px; align-items:center; flex-shrink:0;">
+    <button class="btn-clear-data" onclick="clearSavedData()" title="清除所有填寫的內容（可重新開始）">清除資料</button>
+    <button class="btn-print" style="margin-left:0;" onclick="window.print()">列印 / 儲存 PDF</button>
+  </div>
 </div>
+<div class="save-toast" id="saveToast">✓ 已自動儲存</div>
 
 <!-- ===== MAIN CONTENT ===== -->
 <div class="container">
@@ -1937,6 +1973,7 @@
       indicator.classList.remove('visible');
     }
     updateProgress();
+    scheduleSave();
   }
 
   function updateProgress() {
@@ -2000,6 +2037,90 @@
   }
   updateHeaderHeight();
   window.addEventListener('resize', updateHeaderHeight);
+
+  /* -------- Auto Save / Restore (localStorage) -------- */
+  var SAVE_KEY = 'ai_ws_v1';
+  var _saveTimer = null;
+
+  function scheduleSave() {
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(doSave, 600);
+  }
+
+  function doSave() {
+    var data = {};
+    document.querySelectorAll('textarea').forEach(function(ta, i) {
+      data['ta_' + (ta.id || i)] = ta.value;
+    });
+    document.querySelectorAll('input[type="checkbox"]').forEach(function(cb, i) {
+      data['cb_' + i] = cb.checked;
+    });
+    var rc = document.querySelector('input[name="gemType"]:checked');
+    if (rc) data['radio_gemType'] = rc.value;
+    data['doneStates'] = JSON.stringify(done);
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {}
+    showSaveToast();
+  }
+
+  function restoreData() {
+    var raw;
+    try { raw = localStorage.getItem(SAVE_KEY); } catch(e) {}
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch(e) { return; }
+
+    // 1. 還原 radio（先觸發模板更新）
+    if (data['radio_gemType']) {
+      var rb = document.querySelector('input[name="gemType"][value="' + data['radio_gemType'] + '"]');
+      if (rb) { rb.checked = true; if (typeof updateGemTemplate === 'function') updateGemTemplate(rb.value); }
+    }
+
+    // 2. 還原 checkbox（含視覺狀態）
+    document.querySelectorAll('input[type="checkbox"]').forEach(function(cb, i) {
+      var v = data['cb_' + i];
+      if (v === undefined) return;
+      cb.checked = v;
+      var evalLabel = cb.closest('.eval-item');
+      if (evalLabel) { if (v) evalLabel.classList.add('checked'); else evalLabel.classList.remove('checked'); }
+    });
+
+    // 3. 還原 textarea（最後執行，覆蓋模板）
+    document.querySelectorAll('textarea').forEach(function(ta, i) {
+      var k = 'ta_' + (ta.id || i);
+      if (data[k] !== undefined) ta.value = data[k];
+    });
+
+    // 4. 還原完成狀態
+    if (data['doneStates']) {
+      try {
+        var ds = JSON.parse(data['doneStates']);
+        for (var k in ds) {
+          if (ds[k] === true) markDone(parseInt(k));
+        }
+      } catch(e) {}
+    }
+  }
+
+  function clearSavedData() {
+    if (!confirm('確定要清除所有填寫的內容嗎？清除後頁面會重新載入。')) return;
+    try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+    location.reload();
+  }
+
+  function showSaveToast() {
+    var el = document.getElementById('saveToast');
+    if (!el) return;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(function() { el.classList.remove('show'); }, 2000);
+  }
+
+  // 綁定事件
+  document.addEventListener('input', scheduleSave);
+  document.addEventListener('change', scheduleSave);
+
+  // 頁面載入時還原
+  restoreData();
 
   /* -------- Table Paste Handler -------- */
   function looksLikeTable(text) {
